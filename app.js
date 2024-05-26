@@ -53,12 +53,20 @@ app.get("/listings/:id/edit",async (req,res)=>{
     res.render("./listings/edit",{data});
 });
 
-app.patch("/llistings/:id",async (req,res)=>{
+
+app.patch("/listings/:id",async (req,res)=>{
     let {id} = req.params;
-     
+
     await Listing.findByIdAndUpdate(id,{...req.body.listing});
     res.redirect(`/listing/${id}`);
 
-})
+});
+
+//DELETE ROUTE
+app.delete("/listings/:id",async (req,res)=>{
+    let {id} = req.params;
+    await Listing.findByIdAndDelete(id);
+    res.redirect("/listings");
+});
 
 app.listen(8080);
