@@ -1,19 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
+<% layout('/layouts/boilerplate') -%>
 <body>
-    
+    <br>
+    <h3>ADD New Listings</h3>
+    <div class="row">
+    <div class="col-8 offset-2">
     <form method="post" action="/listings">
-        <input type="text" name="listing[title]" placeholder="enter title"><br><br>
-        <textarea name="listing[description] "placeholder="Write description"></textarea> <br><br>
-        <input type="number" name="listing[price]"  placeholder="enter price"> <br><br>
-        <input type="text" name="listing[location]"  placeholder="enter location"> <br><br>
-        <input type="text" name="listing[country]"  placeholder="enter country">  <br><br>
-       <button>submit</button>
+        <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" name="listing[title]" id="title" class="form-control">
+        </div>
+
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea name="listing[description] " class="form-control"></textarea> 
+        </div>
+
+        <div class="mb-3">
+            <label for="image" class="form-label">Image link</label>
+            <input type="text" name="listing[image]" class="form-control" >
+        </div>
+        
+        <div class="row">
+            <div class="mb-3 col-md-4">
+                <label for="price" class="form-label">Price</label>
+                <input type="number" name="listing[price]" class="form-control" > 
+            </div>
+    
+            <div class="mb-3 col-md-8">
+                <label for="price" class="form-label">Location</label>
+                <input type="text" name="listing[location]" class="form-control" > 
+            </div>
+           
+            <div class="mb-3">
+                <label for="price" class="form-label">Country</label>
+                <input type="text" name="listing[country]" class="form-control"> 
+            </div>
+        </div>
+       <button class="btn btn-dark add-btn">ADD</button>
     </form>
+    <br><br>
+</div>
+</div>
 </body>
-</html>

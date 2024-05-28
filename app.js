@@ -25,6 +25,10 @@ async function main() {
     // use `await mongoose.connect('mongodb://user:password@127.0.0.1:27017/test');` if your database has auth enabled
   }
 //INDEX ROUTE
+app.get("/",(req,res)=>{
+    res.send("Hi I am root");
+})
+
 app.get("/listings",async (req,res)=>{
     const allListing = await Listing.find({});
     res.render("./listings/index",{allListing})
