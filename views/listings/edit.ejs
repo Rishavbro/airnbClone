@@ -2,39 +2,42 @@
 <body>
     <br>
     <H2>EDTI THIS ROUTE</H2>
-    <form method="post" action="/listings/<%= data._id %>?_method=PATCH">
+    <form method="post" action="/listings/<%= data._id %>?_method=PATCH" novalidate class="needs-validation">
         <div class="row">
             <div class="col-8 offset-2">
             <form method="post" action="/listings">
                 <div class="mb-3">
                     <label for="title" class="form-label">Title</label>
-                    <input type="text" name="listing[title]" id="title" class="form-control" value="<%=data.title%>">
+                    <input type="text" name="listing[title]" id="title" class="form-control" value="<%=data.title%>" required>
                 </div>
         
                 <div class="mb-3">
                     <label for="description" class="form-label">Description</label>
-                    <textarea name="listing[description] " class="form-control"><%=data.description%></textarea> 
+                    <textarea name="listing[description] " class="form-control" required><%=data.description%></textarea> 
                 </div>
         
                 <div class="mb-3">
                     <label for="image" class="form-label">Image link</label>
-                    <input type="text" name="listing[image]" class="form-control" value="<%=data.image%>">
+                    <input type="text" name="listing[image]" class="form-control" value="<%=data.image%>" required>
+                    <div class="invalid-feedback">
+                       please enter a valid link
+                      </div>
                 </div>
                 
                 <div class="row">
                     <div class="mb-3 col-md-4">
                         <label for="price" class="form-label">Price</label>
-                        <input type="number" name="listing[price]" class="form-control" value="<%=data.price%>"> 
+                        <input type="number" name="listing[price]" class="form-control" value="<%=data.price%>" required> 
                     </div>
             
                     <div class="mb-3 col-md-8">
                         <label for="price" class="form-label">Location</label>
-                        <input type="text" name="listing[location]" class="form-control" value="<%=data.location%>" > 
+                        <input type="text" name="listing[location]" class="form-control" value="<%=data.location%>" required> 
                     </div>
                    
                     <div class="mb-3">
                         <label for="price" class="form-label">Country</label>
-                        <input type="text" name="listing[country]" class="form-control"  value="<%=data.country%>"> 
+                        <input type="text" name="listing[country]" class="form-control"  value="<%=data.country%>" required> 
                     </div>
                 </div>
                <button class="btn btn-dark edit-btn">ADD</button>
