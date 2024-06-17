@@ -1,14 +1,34 @@
 const express = require('express');
-const methodOverride = require('method-override')
+const methodOverride = require('method-override');
+const session = require('express-session')
 const app = express();
 const mongoose = require("mongoose");
+const flash = require('connect-flash');;
 const Listing = require("./models/listing.js");
+const Review = require("./models/review.js");
 const path = require("path");
 const ejsMate = require("ejs-mate");
 const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
 const { stat } = require('fs');
-const {listingSchema} = require("./schema.js");
+const {listingSchema,reviewSchema} = require("./schema.js");
+const { findById } = require('./models/review.js');
+const listings = require("./routes/listing.js");
+const reviews = require("./routes/review.js");
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
+const user = require("./models/user.js")
+
+let sessionOption = {
+    secret:'mysupersecretcode',
+    resave:false,
+    saveUninitialized :true,
+    cookie:{
+        expires: Date.now()+7*24*60*60*1000,
+        maxAge: 7*24*60*60*1000,
+        httpOnly:true
+    }
+};
 
 app.use(methodOverride('_method'));
 app.set("view engine", "ejs");
@@ -17,15 +37,6 @@ app.use(express.urlencoded({extended:true}));
 app.engine('ejs', ejsMate);
 app.use(express.static(path.join(__dirname,"/public")));
 
-const validateListing = (req,res,next) =>{
-    let {error} = listingSchema.validate(req.body);
-    if(error){
-        let errMsg = error.details.map((el)=> el.message).join(",")
-     throw new ExpressError(400,errMsg)
-    }else{
-        next()
-    }
-}
 
 main().then(()=>{
     console.log("connected to db")
@@ -37,59 +48,41 @@ async function main() {
     await mongoose.connect('mongodb://127.0.0.1:27017/wanderlust');
   
     // use `await mongoose.connect('mongodb://user:password@127.0.0.1:27017/test');` if your database has auth enabled
-  }
-//INDEX ROUTE
-app.get("/",(req,res)=>{
+  };
+
+  app.get("/",(req,res)=>{
     res.send("Hi I am root");
-})
+});
 
-app.get("/listings",wrapAsync (async (req,res)=>{
-    const allListing = await Listing.find({});
-    res.render("./listings/index",{allListing})
-}));
+  app.use(session(sessionOption));
+  app.use(flash());
 
-//POST ROUTE , create route
-app.get("/listings/new",(req,res)=>{
-    res.render("./listings/new")
- });
- 
- app.post("/listings",validateListing,wrapAsync(async (req,res,next)=>{
- 
-    const newListing = new Listing(req.body.listing);
-   await newListing.save()
-    res.redirect("/listings");
- }));
+  app.use(passport.initialize());
+  app.use(passport.session());
+  passport.use(new LocalStrategy(user.authenticate()));
+  passport.serializeUser(User.serializeUser());
+  passport.deserializeUser(User.deserializeUser());
 
-//SHOW ROUTE
-app.get("/listings/:id",wrapAsync(async (req,res)=>{
-    let {id} = req.params;
-    let listing = await Listing.findById(id);
-    res.render("./listings/show",{listing})
-}));
+  app.use((req,res,next)=>{
+    res.locals.success = req.flash("success");
+    res.locals.error = req.flash("error")
+    next();
+  })
+  
+  app.get("/demo",async(req,res)=>{
+   let fakeUser = new user({
+    email:"kumar2@gmail.com",
+    username:"delta-student"
+   })
+   let registerdUser = await user.register(fakeUser,"helloworld")
+   res.send(registerdUser);
+  })
 
-
-
-//EDIT ROUTE , UPDATE ROUTE
-app.get("/listings/:id/edit",wrapAsync(async (req,res)=>{
-    let {id} = req.params;
-    let data = await Listing.findById(id)
-    res.render("./listings/edit",{data});
-}));
+ app.use("/listings",listings);
+ app.use("/listings/:id/reviews",reviews);
 
 
-app.patch("/listings/:id",validateListing,wrapAsync(async (req,res)=>{
-    let {id} = req.params;
-    await Listing.findByIdAndUpdate(id,{...req.body.listing});
-    res.redirect(`/listings/${id}`);
 
-}));
-
-//DELETE ROUTE
-app.delete("/listings/:id",wrapAsync(async (req,res)=>{
-    let {id} = req.params;
-    await Listing.findByIdAndDelete(id);
-    res.redirect("/listings");
-}));
 
 //NO ROUTES FOUND 
 app.all("*",(req,res,next)=>{
