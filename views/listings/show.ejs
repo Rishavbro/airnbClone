@@ -9,14 +9,15 @@
                 <img src="<%= listing.image %>" class="card-img-top show-img" alt="listing_image">
                 <div class="card-body">
                   <p class="card-text">
-                    
+                       <i>owned by:<%= listing.owner.username %></i>
+                       <br>
                       <%=listing.description %> <br>
                       &#8377;<%= listing.price.toLocaleString("en-In") %> <br>
                       <%= listing.location %>,<%= listing.country %>
                 </p>
                 </div>
             </div>
-  
+
 <div class="btns">
     <a href="/listings/<%=listing._id%>/edit" class="btn btn-dark edit-btn offset-3">Edit</a>
         
@@ -24,6 +25,7 @@
         <button class="btn btn-dark offset-5">Delete</button>
     </form>
 </div>
+
 <hr>
 
 <div class="col-8 offset-2 ">

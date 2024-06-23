@@ -6,7 +6,7 @@ const { string } = require("joi");
 
 let userSchema = new mongoose.Schema({
     email:{
-        type:string,
+        type:String,
         required:true,
        
     }
