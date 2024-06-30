@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+let user = require("./user")
 
 const reviewSchema = new mongoose.Schema({
     comment:String,
@@ -10,6 +11,10 @@ const reviewSchema = new mongoose.Schema({
     createdA:{
         type:Date,
         default:Date.now()
+    },
+    author:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"user"
     }
 });
 
