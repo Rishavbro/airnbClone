@@ -113,3 +113,9 @@ body{
     display: flex;
    gap: 5px;
 }
+
+/* map */
+#map {
+   height: 400px;
+   width: 800px;
+ }

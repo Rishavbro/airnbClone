@@ -21,7 +21,7 @@ router.route("/").get(wrapAsync (listingController.index)).post(isLoggedin,uploa
 router.get("/new",isLoggedin,listingController.renderNewForm);
  
 
-router.route("/:id").get(wrapAsync(listingController.showListing)).patch(isLoggedin,isOwner,validateListing,wrapAsync(listingController.renderUpdateForm)).delete(isLoggedin,isOwner,wrapAsync(listingController.destroyListing))
+router.route("/:id").get(wrapAsync(listingController.showListing)).patch(isLoggedin,isOwner,upload.single("listing[image]"),validateListing,wrapAsync(listingController.renderUpdateForm)).delete(isLoggedin,isOwner,wrapAsync(listingController.destroyListing))
 
 
 router.get("/:id/edit",isLoggedin,isOwner,wrapAsync(listingController.renderEditForm));
