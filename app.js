@@ -8,7 +8,8 @@ if(process.env.NODE_ENV != "production"){
 
 const express = require('express');
 const methodOverride = require('method-override');
-const session = require('express-session')
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
 const app = express();
 const mongoose = require("mongoose");
 const flash = require('connect-flash');;
@@ -29,10 +30,32 @@ const LocalStrategy = require("passport-local");
 const user = require("./models/user.js");
 const multer  = require('multer');
 const upload = multer({ dest: 'uploads/' });
- 
 
+app.use(methodOverride('_method'));
+app.set("view engine", "ejs");
+app.set("views",path.join(__dirname,"views"));
+app.use(express.urlencoded({extended:true}));
+app.engine('ejs', ejsMate);
+app.use(express.static(path.join(__dirname,"/public")));
+
+// const mongoURL = 'mongodb://127.0.0.1:27017/wanderlust'
+
+const dbUrl = process.env.ATLASDB_URL;
+ 
+const store = MongoStore.create({
+  mongoUrl:dbUrl,
+  crypto:{
+    secret:'mysupersecretcode'
+  },
+  touchAfter:24*60*60,
+});
+
+store.on("error",()=>{
+  console.log("error in mongo session STORE",err)
+})
 
 let sessionOption = {
+    store,
     secret:'mysupersecretcode',
     resave:false,
     saveUninitialized :true,
@@ -43,12 +66,7 @@ let sessionOption = {
     }
 };
 
-app.use(methodOverride('_method'));
-app.set("view engine", "ejs");
-app.set("views",path.join(__dirname,"views"));
-app.use(express.urlencoded({extended:true}));
-app.engine('ejs', ejsMate);
-app.use(express.static(path.join(__dirname,"/public")));
+
 
 
 main().then(()=>{
@@ -58,14 +76,15 @@ main().then(()=>{
 })
 
 async function main() {
-    await mongoose.connect('mongodb://127.0.0.1:27017/wanderlust');
+    await mongoose.connect(dbUrl);
   
-    // use `await mongoose.connect('mongodb://user:password@127.0.0.1:27017/test');` if your database has auth enabled
   };
 
-  app.get("/",(req,res)=>{
-    res.render("./listings/home");
-});
+//   app.get("/",(req,res)=>{
+//     res.render("./listings/home");
+// });
+
+
 
   app.use(session(sessionOption));
   app.use(flash());
