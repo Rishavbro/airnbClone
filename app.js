@@ -38,14 +38,14 @@ app.use(express.urlencoded({extended:true}));
 app.engine('ejs', ejsMate);
 app.use(express.static(path.join(__dirname,"/public")));
 
-// const mongoURL = 'mongodb://127.0.0.1:27017/wanderlust'
+
 
 const dbUrl = process.env.ATLASDB_URL;
  
 const store = MongoStore.create({
   mongoUrl:dbUrl,
   crypto:{
-    secret:'mysupersecretcode'
+    secret:process.env.SECRET,
   },
   touchAfter:24*60*60,
 });
@@ -55,8 +55,7 @@ store.on("error",()=>{
 })
 
 let sessionOption = {
-    store,
-    secret:'mysupersecretcode',
+    secret:process.env.SECRET,
     resave:false,
     saveUninitialized :true,
     cookie:{
