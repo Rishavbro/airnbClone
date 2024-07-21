@@ -79,9 +79,9 @@ async function main() {
   
   };
 
-//   app.get("/",(req,res)=>{
-//     res.render("./listings/home");
-// });
+  app.get("/",(req,res)=>{
+    res.send("hi");
+});
 
 
 
